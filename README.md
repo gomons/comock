@@ -4,6 +4,10 @@ Header only library for mocking C++ classes and interfaces. It is designed to be
 simple and easy to use, while providing powerful features for mocking and
 testing.
 
+| Branch | Status |
+|--------|--------|
+|Main    | [![comock](https://github.com/gomons/comock/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/gomons/comock/actions/workflows/cmake-multi-platform.yml)|
+
 ## Thread Safety
 
 This library is **not thread-safe**.

@@ -1,0 +1,37 @@
+name: comock
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            cpp_compiler: cl
+          - os: ubuntu-latest
+            cpp_compiler: g++
+          - os: ubuntu-latest
+            cpp_compiler: clang++
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: CMake configure
+      run: >
+        cmake -B build -S src
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_BUILD_TYPE=Release
+
+    - name: CMake build
+      run: cmake --build build --config Release
+
+    - name: CMake test
+      run: ctest --test-dir build -C Release
