@@ -1,3 +1,7 @@
-theme: minima
-title: comock documentation
-description: comock documentation
+theme: just-the-docs
+title: comock
+
+just_the_docs:
+  nav:
+    - Home: index.md
+    - Quick start: quick_start.md
