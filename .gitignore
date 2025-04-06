@@ -1,2 +1,11 @@
+# Visual Studio Code
+.vscode/
+
+# Visual Studio
 .vs/
+
+# Jekyll
+_site/
+
+# Custom build directory
 .build/

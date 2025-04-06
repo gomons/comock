@@ -1,11 +1,12 @@
-[![comock](https://github.com/gomons/comock/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/gomons/comock/actions/workflows/cmake-multi-platform.yml)
+---
+layout: home
+title: Home
+---
 
 # comock - **C**++ **O**bject **MOCK** library
 
 A lightweight, header-only library for mocking (mocks) and spying (spies) on
 virtual methods in C++ classes and interfaces. Its main focus is simplicity.
-
-Documentation: [https://gomons.github.io/comock](https://gomons.github.io/comock)
 
 ## Features
 
@@ -13,17 +14,13 @@ Documentation: [https://gomons.github.io/comock](https://gomons.github.io/comock
 - Mock and spy on C++ virtual methods
 - Easy call sequence verification
 
-## Requirements
+## Why was this library created?
 
-- C++17 or later (C++11 support can be easily added by using [boost](https://www.boost.org/))
-- [boost.preprocessor](https://github.com/boostorg/preprocessor)
+I was working on a project that didn't have a mocking library. Instead of adding
+a third-party dependency, I quickly hacked together a simple solution. Later, we
+switched to **gMock**, but I liked the result and decided to share it on GitHub.
 
-### Test requirements
-
-- [CMake](https://cmake.org/download/) 3.10 or later
-- [doctest](https://github.com/doctest/doctest)
-
-## Thread Safety
+## Limitations
 
 **comock** is **not thread-safe**.
 
@@ -31,7 +28,20 @@ Documentation: [https://gomons.github.io/comock](https://gomons.github.io/comock
 - Concurrent calls to mocks from multiple threads can lead to race conditions
   and undefined behavior.
 
+## Requirements and dependencies
+
+**comock** requires C++17 or later. It uses `std::any` and `std::optional` from
+the C++ standard library. If you are using an older C++ version, you can switch
+to the `boost` library by replacing all occurrences of `std::any` and
+`std::optional` with `boost::any` and `boost::optional` in the `comock.h` file.
+
+**comock** also depends on the `boost.preprocessor` library. Since
+`boost.preprocessor` is header-only, the entire **comock** library remains
+header-only as well.
+
 ## Simple example
+
+Here’s a minimal example of mocking a method and verifying a call.
 
 ```cpp
 #include <comock/comock.h>
