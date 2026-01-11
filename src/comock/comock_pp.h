@@ -23,7 +23,7 @@
 #pragma once
 
 // Minimal preprocessor metaprogramming for comock
-// Replaces boost.preprocessor dependency
+// Replaces boost.preprocessor dependency (401 files -> 1 file)
 // Supports sequences up to 16 elements
 //
 // Sequence format: (elem1)(elem2)(elem3)
@@ -42,13 +42,47 @@
 #define COMOCK_PP_CAT(a, b) COMOCK_PP_CAT_I(a, b)
 #define COMOCK_PP_CAT_I(a, b) a##b
 
+#define COMOCK_PP_EMPTY()
+
 #define COMOCK_PP_IF(cond, t, f) COMOCK_PP_CAT(COMOCK_PP_IF_, cond)(t, f)
 #define COMOCK_PP_IF_0(t, f) f
 #define COMOCK_PP_IF_1(t, f) t
+#define COMOCK_PP_IF_2(t, f) t
+#define COMOCK_PP_IF_3(t, f) t
+#define COMOCK_PP_IF_4(t, f) t
+#define COMOCK_PP_IF_5(t, f) t
+#define COMOCK_PP_IF_6(t, f) t
+#define COMOCK_PP_IF_7(t, f) t
+#define COMOCK_PP_IF_8(t, f) t
+#define COMOCK_PP_IF_9(t, f) t
+#define COMOCK_PP_IF_10(t, f) t
+#define COMOCK_PP_IF_11(t, f) t
+#define COMOCK_PP_IF_12(t, f) t
+#define COMOCK_PP_IF_13(t, f) t
+#define COMOCK_PP_IF_14(t, f) t
+#define COMOCK_PP_IF_15(t, f) t
+#define COMOCK_PP_IF_16(t, f) t
 
 #define COMOCK_PP_COMMA_IF(cond) COMOCK_PP_CAT(COMOCK_PP_COMMA_IF_, cond)
 #define COMOCK_PP_COMMA_IF_0
 #define COMOCK_PP_COMMA_IF_1 ,
+#define COMOCK_PP_COMMA_IF_2 ,
+#define COMOCK_PP_COMMA_IF_3 ,
+#define COMOCK_PP_COMMA_IF_4 ,
+#define COMOCK_PP_COMMA_IF_5 ,
+#define COMOCK_PP_COMMA_IF_6 ,
+#define COMOCK_PP_COMMA_IF_7 ,
+#define COMOCK_PP_COMMA_IF_8 ,
+#define COMOCK_PP_COMMA_IF_9 ,
+#define COMOCK_PP_COMMA_IF_10 ,
+#define COMOCK_PP_COMMA_IF_11 ,
+#define COMOCK_PP_COMMA_IF_12 ,
+#define COMOCK_PP_COMMA_IF_13 ,
+#define COMOCK_PP_COMMA_IF_14 ,
+#define COMOCK_PP_COMMA_IF_15 ,
+#define COMOCK_PP_COMMA_IF_16 ,
+
+#define COMOCK_PP_NIL
 
 // ============================================================================
 // Arithmetic
@@ -172,9 +206,12 @@
 #define COMOCK_PP_SEQ_SIZE_COMOCK_PP_SEQ_SIZE_17 17
 
 // SEQ_ELEM: Extract Nth element from sequence
-// Example: COMOCK_PP_SEQ_ELEM_1((a)(b)(c)) -> b
-// Implementation: Apply macro N times, each time removing first element
-#define COMOCK_PP_SEQ_ELEM_0(elem) elem COMOCK_PP_SEQ_ELEM_DISCARD
+// Based on boost.preprocessor technique:
+// - ELEM_N expands to: element, COMOCK_PP_NIL
+// - Wrapper extracts first arg, discards COMOCK_PP_NIL
+
+// Element extraction macros that return (elem, NIL)
+#define COMOCK_PP_SEQ_ELEM_0(x) x, COMOCK_PP_NIL
 #define COMOCK_PP_SEQ_ELEM_1(_) COMOCK_PP_SEQ_ELEM_0
 #define COMOCK_PP_SEQ_ELEM_2(_) COMOCK_PP_SEQ_ELEM_1
 #define COMOCK_PP_SEQ_ELEM_3(_) COMOCK_PP_SEQ_ELEM_2
@@ -190,7 +227,15 @@
 #define COMOCK_PP_SEQ_ELEM_13(_) COMOCK_PP_SEQ_ELEM_12
 #define COMOCK_PP_SEQ_ELEM_14(_) COMOCK_PP_SEQ_ELEM_13
 #define COMOCK_PP_SEQ_ELEM_15(_) COMOCK_PP_SEQ_ELEM_14
-#define COMOCK_PP_SEQ_ELEM_DISCARD(...)
+
+// Wrapper macros to extract element from (elem, NIL) pair
+#define COMOCK_PP_SEQ_ELEM_EXTRACT_I(elem_with_nil) COMOCK_PP_SEQ_ELEM_EXTRACT_II(elem_with_nil)
+#define COMOCK_PP_SEQ_ELEM_EXTRACT_II(elem, _) elem
+
+// SEQ_HEAD: Get first element of sequence (properly extracted)
+#define COMOCK_PP_SEQ_HEAD(seq) COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)
+#define COMOCK_PP_SEQ_TAIL_I(x)
+#define COMOCK_PP_SEQ_TAIL(seq) COMOCK_PP_SEQ_TAIL_I seq
 
 // SEQ_FOR_EACH_I: Iterate over sequence with 0-based index
 // Calls: macro(~, data, 0, elem0) macro(~, data, 1, elem1) ...
@@ -201,172 +246,172 @@
 #define COMOCK_PP_SEQ_FOR_EACH_I_0(macro, data, seq)
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_1(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_HEAD(seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_2(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_3(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_4(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_5(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_6(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_7(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_8(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_9(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq) \
-    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_8 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq)) \
+    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_8 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_10(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq) \
-    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_8 seq) \
-    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_9 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq)) \
+    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_8 seq)) \
+    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_9 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_11(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq) \
-    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_8 seq) \
-    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_9 seq) \
-    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_10 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq)) \
+    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_8 seq)) \
+    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_9 seq)) \
+    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_10 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_12(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq) \
-    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_8 seq) \
-    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_9 seq) \
-    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_10 seq) \
-    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_11 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq)) \
+    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_8 seq)) \
+    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_9 seq)) \
+    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_10 seq)) \
+    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_11 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_13(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq) \
-    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_8 seq) \
-    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_9 seq) \
-    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_10 seq) \
-    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_11 seq) \
-    macro(~, data, 12, COMOCK_PP_SEQ_ELEM_12 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq)) \
+    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_8 seq)) \
+    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_9 seq)) \
+    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_10 seq)) \
+    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_11 seq)) \
+    macro(~, data, 12, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_12 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_14(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq) \
-    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_8 seq) \
-    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_9 seq) \
-    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_10 seq) \
-    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_11 seq) \
-    macro(~, data, 12, COMOCK_PP_SEQ_ELEM_12 seq) \
-    macro(~, data, 13, COMOCK_PP_SEQ_ELEM_13 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq)) \
+    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_8 seq)) \
+    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_9 seq)) \
+    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_10 seq)) \
+    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_11 seq)) \
+    macro(~, data, 12, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_12 seq)) \
+    macro(~, data, 13, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_13 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_15(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq) \
-    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_8 seq) \
-    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_9 seq) \
-    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_10 seq) \
-    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_11 seq) \
-    macro(~, data, 12, COMOCK_PP_SEQ_ELEM_12 seq) \
-    macro(~, data, 13, COMOCK_PP_SEQ_ELEM_13 seq) \
-    macro(~, data, 14, COMOCK_PP_SEQ_ELEM_14 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq)) \
+    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_8 seq)) \
+    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_9 seq)) \
+    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_10 seq)) \
+    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_11 seq)) \
+    macro(~, data, 12, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_12 seq)) \
+    macro(~, data, 13, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_13 seq)) \
+    macro(~, data, 14, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_14 seq))
 
 #define COMOCK_PP_SEQ_FOR_EACH_I_16(macro, data, seq) \
-    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_0 seq) \
-    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_1 seq) \
-    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_2 seq) \
-    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_3 seq) \
-    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_4 seq) \
-    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_5 seq) \
-    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_6 seq) \
-    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_7 seq) \
-    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_8 seq) \
-    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_9 seq) \
-    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_10 seq) \
-    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_11 seq) \
-    macro(~, data, 12, COMOCK_PP_SEQ_ELEM_12 seq) \
-    macro(~, data, 13, COMOCK_PP_SEQ_ELEM_13 seq) \
-    macro(~, data, 14, COMOCK_PP_SEQ_ELEM_14 seq) \
-    macro(~, data, 15, COMOCK_PP_SEQ_ELEM_15 seq)
+    macro(~, data, 0, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)) \
+    macro(~, data, 1, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_1 seq)) \
+    macro(~, data, 2, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_2 seq)) \
+    macro(~, data, 3, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_3 seq)) \
+    macro(~, data, 4, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_4 seq)) \
+    macro(~, data, 5, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_5 seq)) \
+    macro(~, data, 6, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_6 seq)) \
+    macro(~, data, 7, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_7 seq)) \
+    macro(~, data, 8, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_8 seq)) \
+    macro(~, data, 9, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_9 seq)) \
+    macro(~, data, 10, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_10 seq)) \
+    macro(~, data, 11, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_11 seq)) \
+    macro(~, data, 12, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_12 seq)) \
+    macro(~, data, 13, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_13 seq)) \
+    macro(~, data, 14, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_14 seq)) \
+    macro(~, data, 15, COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_15 seq))
 
 // ============================================================================
 // Compatibility aliases for boost.preprocessor naming
