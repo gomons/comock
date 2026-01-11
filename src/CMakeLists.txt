@@ -5,11 +5,6 @@ project(comock_test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Enable conformant preprocessor mode for MSVC
-if(MSVC)
-    add_compile_options(/Zc:preprocessor)
-endif()
-
 set(SOURCES
     comock_test/test_main.cpp
     comock_test/test_interface.cpp

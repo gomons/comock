@@ -229,10 +229,18 @@
 #define COMOCK_PP_SEQ_ELEM_15(_) COMOCK_PP_SEQ_ELEM_14
 
 // Wrapper macros to extract element from (elem, NIL) pair
-// Uses variadic macros for MSVC compatibility when elem contains commas
-#define COMOCK_PP_SEQ_ELEM_EXTRACT_I(elem_with_nil) COMOCK_PP_SEQ_ELEM_EXTRACT_II(elem_with_nil)
-#define COMOCK_PP_SEQ_ELEM_EXTRACT_II(...) COMOCK_PP_SEQ_ELEM_EXTRACT_III(__VA_ARGS__)
-#define COMOCK_PP_SEQ_ELEM_EXTRACT_III(elem, ...) elem
+// Different implementations for MSVC vs standard preprocessor
+#ifdef _MSC_VER
+    // MSVC traditional preprocessor: double-wrap to handle commas properly
+    #define COMOCK_PP_SEQ_ELEM_EXTRACT_I(elem_with_nil) COMOCK_PP_SEQ_ELEM_EXTRACT_II((elem_with_nil))
+    #define COMOCK_PP_SEQ_ELEM_EXTRACT_II(res) COMOCK_PP_SEQ_ELEM_EXTRACT_IV(COMOCK_PP_SEQ_ELEM_EXTRACT_III res)
+    #define COMOCK_PP_SEQ_ELEM_EXTRACT_III(elem, _) elem COMOCK_PP_EMPTY()
+    #define COMOCK_PP_SEQ_ELEM_EXTRACT_IV(x) x
+#else
+    // Standard preprocessor (GCC, Clang, conformant MSVC with /Zc:preprocessor)
+    #define COMOCK_PP_SEQ_ELEM_EXTRACT_I(elem_with_nil) COMOCK_PP_SEQ_ELEM_EXTRACT_II(elem_with_nil)
+    #define COMOCK_PP_SEQ_ELEM_EXTRACT_II(elem, _) elem
+#endif
 
 // SEQ_HEAD: Get first element of sequence (properly extracted)
 #define COMOCK_PP_SEQ_HEAD(seq) COMOCK_PP_SEQ_ELEM_EXTRACT_I(COMOCK_PP_SEQ_ELEM_0 seq)
