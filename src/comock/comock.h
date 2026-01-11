@@ -31,10 +31,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <boost/preprocessor/comparison.hpp>
-#include <boost/preprocessor/control.hpp>
-#include <boost/preprocessor/punctuation.hpp>
-#include <boost/preprocessor/seq.hpp>
+#include <comock/comock_pp.h>
 
 namespace comock {
 
