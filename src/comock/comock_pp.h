@@ -184,7 +184,8 @@
 #define COMOCK_PP_SEQ_SIZE_13(_) COMOCK_PP_SEQ_SIZE_14
 #define COMOCK_PP_SEQ_SIZE_14(_) COMOCK_PP_SEQ_SIZE_15
 #define COMOCK_PP_SEQ_SIZE_15(_) COMOCK_PP_SEQ_SIZE_16
-#define COMOCK_PP_SEQ_SIZE_16(_) COMOCK_PP_SEQ_SIZE_17
+// Intentionally stop at 16 - no COMOCK_PP_SEQ_SIZE_16 definition
+// This causes a compile error if sequence has >16 elements
 
 #define COMOCK_PP_SEQ_SIZE_COMOCK_PP_SEQ_SIZE_0 0
 #define COMOCK_PP_SEQ_SIZE_COMOCK_PP_SEQ_SIZE_1 1
@@ -203,7 +204,6 @@
 #define COMOCK_PP_SEQ_SIZE_COMOCK_PP_SEQ_SIZE_14 14
 #define COMOCK_PP_SEQ_SIZE_COMOCK_PP_SEQ_SIZE_15 15
 #define COMOCK_PP_SEQ_SIZE_COMOCK_PP_SEQ_SIZE_16 16
-#define COMOCK_PP_SEQ_SIZE_COMOCK_PP_SEQ_SIZE_17 17
 
 // SEQ_ELEM: Extract Nth element from sequence
 // Based on boost.preprocessor technique:
